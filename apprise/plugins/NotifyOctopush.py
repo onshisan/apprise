@@ -163,6 +163,11 @@ class NotifyOctopush(NotifyBase):
             'type': 'bool',
             'default': False,
         },
+        'replies': {
+            'name': _('Accept Replies'),
+            'type': 'bool',
+            'default': False,
+        },
         'purpose': {
             'name': _('Purpose'),
             'type': 'choice:string',
@@ -179,7 +184,8 @@ class NotifyOctopush(NotifyBase):
     })
 
     def __init__(self, api_login, api_key, targets=None, batch=False,
-                 sender=None, purpose=None, mtype=None, **kwargs):
+                 sender=None, purpose=None, mtype=None, replies=False,
+                 **kwargs):
         """
         Initialize Notify Octopush Object
         """
@@ -202,7 +208,10 @@ class NotifyOctopush(NotifyBase):
             raise TypeError(msg)
 
         # Prepare Batch Mode Flag
-        self.batch = batch
+        self.batch = True if batch else False
+
+        # Prepare Replies Mode Flag
+        self.replies = True if replies else False
 
         # The Type of the message
         self.mtype = NotifyOctopush.template_args['type']['default'] \
@@ -297,6 +306,7 @@ class NotifyOctopush(NotifyBase):
             "type": self.mtype,
             "purpose": self.purpose,
             "sender": self.app_id if not self.sender else self.sender,
+            "with_replies": self.replies,
         }
 
         for index in range(0, len(targets), batch_size):
@@ -377,6 +387,7 @@ class NotifyOctopush(NotifyBase):
         # Define any URL parameters
         params = {
             'batch': 'yes' if self.batch else 'no',
+            'replies': 'yes' if self.replies else 'no',
             'type': self.mtype,
             'purpose': self.purpose,
         }
@@ -445,6 +456,11 @@ class NotifyOctopush(NotifyBase):
         results['batch'] = \
             parse_bool(results['qsd'].get(
                 'batch', NotifyOctopush.template_args['batch']['default']))
+
+        # Get Replies Mode
+        results['replies'] = \
+            parse_bool(results['qsd'].get(
+                'replies', NotifyOctopush.template_args['replies']['default']))
 
         if 'type' in results['qsd'] and len(results['qsd']['type']):
             # Extract Type

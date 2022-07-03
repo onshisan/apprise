@@ -88,6 +88,10 @@ apprise_url_tests = (
         '&type=invalid', {
             # Testing invalid type change
             'instance': TypeError}),
+    ('octopush://user@myaccount.com/apikey/+3333333333?replies=yes', {
+        # Test replies
+        'instance': plugins.NotifyOctopush,
+    }),
     ('octopush://sender:user@myaccount.com/apikey/{}/{}/{}/?batch=yes'.format(
         '1' * 10, '2' * 3, '3' * 11), {
             # batch mode, 2 valid targets (1 is invalid and skipped)
