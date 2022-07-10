@@ -30,7 +30,7 @@ from apprise import Apprise
 from apprise import NotifyBase
 from apprise import NotifyFormat
 
-from apprise.plugins import SCHEMA_MAP
+from apprise.common import NOTIFY_SCHEMA_MAP
 
 # Disable logging for a cleaner testing output
 import logging
@@ -63,7 +63,7 @@ def test_apprise_asyncio_runtime_error():
             return NotifyBase.parse_url(url, verify_host=False)
 
     # Store our good notification in our schema map
-    SCHEMA_MAP['good'] = GoodNotification
+    NOTIFY_SCHEMA_MAP['good'] = GoodNotification
 
     # Create ourselves an Apprise object
     a = Apprise()
